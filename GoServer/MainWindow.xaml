@@ -15,23 +15,23 @@
                 <Label Content="{Binding AllServicesStatus}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <ToggleButton Content="D2DBS" IsChecked="{Binding D2DBS.IsRunning}" Margin="5"/>
+                <Button Content="D2DBS" Click="StartService_Click" Margin="5"/>
                 <Label Content="{Binding D2DBS.Status}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <ToggleButton Content="D2CS" IsChecked="{Binding D2CS.IsRunning}" Margin="5"/>
+                <Button Content="D2CS" Click="StartService_Click" Margin="5"/>
                 <Label Content="{Binding D2CS.Status}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <ToggleButton Content="D2GS" IsChecked="{Binding D2GS.IsRunning}" Margin="5"/>
+                <Button Content="D2GS" Click="StartService_Click" Margin="5"/>
                 <Label Content="{Binding D2GS.Status}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <ToggleButton Content="PVPGN" IsChecked="{Binding PVPGN.IsRunning}" Margin="5"/>
+                <Button Content="PVPGN" Click="StartService_Click" Margin="5"/>
                 <Label Content="{Binding PVPGN.Status}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <ToggleButton Content="상점" IsChecked="{Binding Store.IsRunning}" Margin="5"/>
+                <Button Content="상점" Click="StartService_Click" Margin="5"/>
                 <Label Content="{Binding Store.Status}" Margin="5"/>
             </StackPanel>
         </StackPanel>
