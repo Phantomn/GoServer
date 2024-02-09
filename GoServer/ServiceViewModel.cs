@@ -13,6 +13,16 @@ namespace GoServer
         public Service PVPGN { get; set; } = new Service();
         public Service Store { get; set; } = new Service();
 
+        public ServiceViewModel()
+        {
+            var settings = AppSettings.LoadSettings("config.json");
+
+            D2DBS.Path = settings.D2DBSPath;
+            D2CS.Path = settings.D2CSPath;
+            D2GS.Path = settings.D2GSPath;
+            PVPGN.Path = settings.PVPGNPath;
+            Store.Path = settings.StorePath;
+        }
         public string AllServicesStatus
         {
             get
@@ -66,7 +76,7 @@ namespace GoServer
                 case "D2DBS":
                     if (!string.IsNullOrEmpty(D2DBS.Path))
                     {
-                        process.StartInfo.FileName = D2DBS.Path;
+                        //process.StartInfo.FileName = D2DBS.Path;
                         started = true;
                         //started = process.Start();
                         D2DBS.IsRunning = started;
@@ -75,7 +85,7 @@ namespace GoServer
                 case "D2CS":
                     if (!string.IsNullOrEmpty(D2CS.Path))
                     {
-                        process.StartInfo.FileName = D2CS.Path;
+                        //process.StartInfo.FileName = D2CS.Path;
                         started = true;
                         //started = process.Start();
                         D2CS.IsRunning = started;
@@ -84,7 +94,7 @@ namespace GoServer
                 case "D2GS":
                     if (!string.IsNullOrEmpty(D2GS.Path))
                     {
-                        process.StartInfo.FileName = D2GS.Path;
+                        //process.StartInfo.FileName = D2GS.Path;
                         started = true;
                         //started = process.Start();
                         D2GS.IsRunning = started;
@@ -93,7 +103,7 @@ namespace GoServer
                 case "PVPGN":
                     if (!string.IsNullOrEmpty(PVPGN.Path))
                     {
-                        process.StartInfo.FileName = PVPGN.Path;
+                        //process.StartInfo.FileName = PVPGN.Path;
                         started = true;
                         //started = process.Start();
                         PVPGN.IsRunning = started;
@@ -102,7 +112,7 @@ namespace GoServer
                 case "Store":
                     if (!string.IsNullOrEmpty(Store.Path))
                     {
-                        process.StartInfo.FileName = Store.Path;
+                        //process.StartInfo.FileName = Store.Path;
                         started = true;
                         //started = process.Start();
                         Store.IsRunning = started;
