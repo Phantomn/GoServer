@@ -2,7 +2,7 @@
 
 namespace GoServer
 {
-    public class Service
+    public class Service : INotifyPropertyChanged
     {
         private bool _isRunning;
         private string _path;
@@ -10,7 +10,14 @@ namespace GoServer
         public string Path
         {
             get => _path;
-            set { _path = value; OnPropertyChanged(); }
+            set
+            {
+                if (_path != value)
+                {
+                    _path = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public bool IsRunning
@@ -18,9 +25,12 @@ namespace GoServer
             get => _isRunning;
             set
             {
-                _isRunning = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Status));
+                if (_isRunning != value)
+                {
+                    _isRunning = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(Status));
+                }
             }
         }
 

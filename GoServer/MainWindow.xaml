@@ -11,27 +11,27 @@
 
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal" Margin="5">
-                <Button Content="서버" Click="StartAllServices_Click" Margin="5"/>
+                <Button Content="서버" Click="ToggleAllServices_Click" Margin="5"/>
                 <Label Content="{Binding AllServicesStatus}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <Button Content="D2DBS" Click="StartService_Click" Margin="5"/>
+                <Button Content="D2DBS" Click="ToggleService_Click" CommandParameter="D2DBS" Margin="5"/>
                 <Label Content="{Binding D2DBS.Status}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <Button Content="D2CS" Click="StartService_Click" Margin="5"/>
+                <Button Content="D2CS" Click="ToggleService_Click" CommandParameter="D2CS" Margin="5"/>
                 <Label Content="{Binding D2CS.Status}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <Button Content="D2GS" Click="StartService_Click" Margin="5"/>
+                <Button Content="D2GS" Click="ToggleService_Click" CommandParameter="D2GS" Margin="5"/>
                 <Label Content="{Binding D2GS.Status}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <Button Content="PVPGN" Click="StartService_Click" Margin="5"/>
+                <Button Content="PVPGN" Click="ToggleService_Click" CommandParameter="PVPGN" Margin="5"/>
                 <Label Content="{Binding PVPGN.Status}" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <Button Content="상점" Click="StartService_Click" Margin="5"/>
+                <Button Content="Store" Click="ToggleService_Click" CommandParameter="Store" Margin="5"/>
                 <Label Content="{Binding Store.Status}" Margin="5"/>
             </StackPanel>
         </StackPanel>

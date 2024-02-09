@@ -1,17 +1,18 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
-using System;
 
 namespace GoServer
 {
     public class ServiceViewModel : INotifyPropertyChanged
     {
-        public Service D2DBS { get; set; } = new Service();
-        public Service D2CS { get; set; } = new Service();
-        public Service D2GS { get; set; } = new Service();
-        public Service PVPGN { get; set; } = new Service();
-        public Service Store { get; set; } = new Service();
+        public Service D2DBS { get; } = new Service();
+        public Service D2CS { get; } = new Service();
+        public Service D2GS { get; } = new Service();
+        public Service PVPGN { get; } = new Service();
+        public Service Store { get; } = new Service();
 
         public ServiceViewModel()
         {
@@ -23,12 +24,13 @@ namespace GoServer
             PVPGN.Path = settings.PVPGNPath;
             Store.Path = settings.StorePath;
         }
+
         public string AllServicesStatus
         {
             get
             {
-                bool allRunning = D2DBS.IsRunning && D2CS.IsRunning && D2GS.IsRunning && PVPGN.IsRunning;
-                bool anyRunning = D2DBS.IsRunning || D2CS.IsRunning || D2GS.IsRunning || PVPGN.IsRunning;
+                bool allRunning = new[] { D2DBS, D2CS, D2GS, PVPGN }.All(service => service.IsRunning);
+                bool anyRunning = new[] { D2DBS, D2CS, D2GS, PVPGN }.Any(service => service.IsRunning);
 
                 if (allRunning) return "모든 서비스 실행 중";
                 else if (!anyRunning) return "모든 서비스 중지됨";
@@ -38,111 +40,80 @@ namespace GoServer
 
         public void ToggleAllServices()
         {
-            bool allRunning = D2DBS.IsRunning && D2CS.IsRunning && D2GS.IsRunning && PVPGN.IsRunning;
+            bool allRunning = new[] { D2DBS, D2CS, D2GS, PVPGN }.All(service => service.IsRunning);
 
             if (allRunning)
-            {
                 StopAllServices();
-            }
             else
-            {
                 StartAllServices();
-            }
 
             NotifyServiceStatusChanged();
         }
 
-        public void StartService(string serviceName)
+        public void StartService(string serviceName) => UpdateServiceStatus(serviceName, true);
+
+        public void StopService(string serviceName) => UpdateServiceStatus(serviceName, false);
+
+        private void UpdateServiceStatus(string serviceName, bool isRunning)
         {
             try
             {
-                StartServiceInternal(serviceName);
+                var service = GetServiceByName(serviceName);
+                if (service != null)
+                {
+                    service.IsRunning = isRunning;
+
+                    if (isRunning)
+                    {
+                        switch (serviceName)
+                        {
+                            case "D2DBS":
+                                Process.Start(D2DBS.Path); break;
+                            case "D2CS":
+                                Process.Start(D2CS.Path); break;
+                            case "D2GS":
+                                Process.Start(D2GS.Path); break;
+                            case "PVPGN":
+                                Process.Start(PVPGN.Path); break;
+                            case "Store":
+                                Process.Start(Store.Path); break;
+                        }
+                    }
+                }
+                NotifyServiceStatusChanged();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error starting service {serviceName}: {ex.Message}");
+                MessageBox.Show($"Error updating service {serviceName}: {ex.Message}");
             }
-
-            NotifyServiceStatusChanged();
         }
-
-        private void StartServiceInternal(string serviceName)
+        public void ToggleService(string serviceName)
         {
-            Process process = new Process();
-            bool started = false;
-
-            switch (serviceName)
+            var service = GetServiceByName(serviceName);
+            if (service != null)
             {
-                case "D2DBS":
-                    if (!string.IsNullOrEmpty(D2DBS.Path))
-                    {
-                        //process.StartInfo.FileName = D2DBS.Path;
-                        started = true;
-                        //started = process.Start();
-                        D2DBS.IsRunning = started;
-                    }
-                    break;
-                case "D2CS":
-                    if (!string.IsNullOrEmpty(D2CS.Path))
-                    {
-                        //process.StartInfo.FileName = D2CS.Path;
-                        started = true;
-                        //started = process.Start();
-                        D2CS.IsRunning = started;
-                    }
-                    break;
-                case "D2GS":
-                    if (!string.IsNullOrEmpty(D2GS.Path))
-                    {
-                        //process.StartInfo.FileName = D2GS.Path;
-                        started = true;
-                        //started = process.Start();
-                        D2GS.IsRunning = started;
-                    }
-                    break;
-                case "PVPGN":
-                    if (!string.IsNullOrEmpty(PVPGN.Path))
-                    {
-                        //process.StartInfo.FileName = PVPGN.Path;
-                        started = true;
-                        //started = process.Start();
-                        PVPGN.IsRunning = started;
-                    }
-                    break;
-                case "Store":
-                    if (!string.IsNullOrEmpty(Store.Path))
-                    {
-                        //process.StartInfo.FileName = Store.Path;
-                        started = true;
-                        //started = process.Start();
-                        Store.IsRunning = started;
-                    }
-                    break;
+                if (service.IsRunning)
+                    StopService(serviceName);
+                else
+                    StartService(serviceName);
             }
         }
-
-        public void StopService(string serviceName)
+        public bool IsServiceRunning(string serviceName)
+        {
+            var service = GetServiceByName(serviceName);
+            return service != null && service.IsRunning;
+        }
+        private Service GetServiceByName(string serviceName)
         {
             switch (serviceName)
             {
-                case "D2DBS":
-                    D2DBS.IsRunning = false;
-                    break;
-                case "D2CS":
-                    D2CS.IsRunning = false;
-                    break;
-                case "D2GS":
-                    D2GS.IsRunning = false;
-                    break;
-                case "PVPGN":
-                    PVPGN.IsRunning = false;
-                    break;
-                case "Store":
-                    Store.IsRunning = false;
-                    break;
+                case "D2DBS": return D2DBS;
+                case "D2CS": return D2CS;
+                case "D2GS": return D2GS;
+                case "PVPGN": return PVPGN;
+                case "Store": return Store;
+                default: return null;
             }
-
-            NotifyServiceStatusChanged();
         }
 
         public void StartAllServices()
@@ -190,7 +161,7 @@ namespace GoServer
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

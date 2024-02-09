@@ -1,7 +1,7 @@
 {
-    "D2DBSPath": "C:\\Path\\To\\D2DBS.exe",
-    "D2CSPath": "C:\\Path\\To\\D2CS.exe",
-    "D2GSPath": "C:\\Path\\To\\D2GS.exe",
-    "PVPGNPath": "C:\\Path\\To\\PVPGN.exe",
-    "StorePath": "C:\\Path\\To\\Store.exe"
+    "D2DBSPath": "C:\\Windows\\System32\\calc.exe",
+    "D2CSPath": "C:\\Windows\\System32\\calc.exe",
+    "D2GSPath": "C:\\Windows\\System32\\calc.exe",
+    "PVPGNPath": "C:\\Windows\\System32\\calc.exe",
+    "StorePath": "C:\\Windows\\System32\\calc.exe"
 }

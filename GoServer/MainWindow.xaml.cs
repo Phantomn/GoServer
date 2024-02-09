@@ -12,6 +12,8 @@ namespace GoServer
             DataContext = new ServiceViewModel();
         }
 
+        private ServiceViewModel ViewModel => DataContext as ServiceViewModel;
+
         private void LoadSettings_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new Microsoft.Win32.OpenFileDialog
@@ -22,47 +24,45 @@ namespace GoServer
 
             if (openFileDialog.ShowDialog() == true)
             {
-                var settings = AppSettings.LoadSettings(openFileDialog.FileName);
-
-                var viewModel = DataContext as ServiceViewModel;
-                if (viewModel != null)
+                try
                 {
-                    viewModel.D2DBS.Path = settings.D2DBSPath;
-                    viewModel.D2CS.Path = settings.D2CSPath;
-                    viewModel.D2GS.Path = settings.D2GSPath;
-                    viewModel.PVPGN.Path = settings.PVPGNPath;
-                    viewModel.Store.Path = settings.StorePath;
-
-                    // ViewModel의 다른 프로퍼티를 필요에 따라 업데이트...
+                    var settings = AppSettings.LoadSettings(openFileDialog.FileName);
+                    var viewModel = DataContext as ServiceViewModel;
+                    if (viewModel != null)
+                    {
+                        viewModel.D2DBS.Path = settings.D2DBSPath;
+                        viewModel.D2CS.Path = settings.D2CSPath;
+                        viewModel.D2GS.Path = settings.D2GSPath;
+                        viewModel.PVPGN.Path = settings.PVPGNPath;
+                        viewModel.Store.Path = settings.StorePath;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to load settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
-        private void StartAllServices_Click(object sender, RoutedEventArgs e)
+
+        private void StartAllServices_Click(object sender, RoutedEventArgs e) => ViewModel?.StartAllServices();
+
+        private void StopAllServices_Click(object sender, RoutedEventArgs e) => ViewModel?.StopAllServices();
+
+        private void ToggleAllServices_Click(object sender, RoutedEventArgs e) => ViewModel?.ToggleAllServices();
+
+        private void ToggleService_Click(object sender, RoutedEventArgs e)
         {
-            (DataContext as ServiceViewModel)?.StartAllServices();
+            if (sender is Button button && button.CommandParameter is string serviceName)
+            {
+                ViewModel?.ToggleService(serviceName);
+                UpdateButtonContent(button, serviceName);
+            }
         }
 
-        private void StopAllServices_Click(object sender, RoutedEventArgs e)
+        private void UpdateButtonContent(Button button, string serviceName)
         {
-            (DataContext as ServiceViewModel)?.StopAllServices();
-        }
-
-        private void ToggleAllServices_Click(object sender, RoutedEventArgs e)
-        {
-            (DataContext as ServiceViewModel)?.ToggleAllServices();
-        }
-
-        private void StartService_Click(object sender, RoutedEventArgs e)
-        {
-            var serviceName = (sender as Button)?.Content.ToString();
-            (DataContext as ServiceViewModel)?.StartService(serviceName);
-        }
-
-        private void StopService_Click(object sender, RoutedEventArgs e)
-        {
-            var serviceName = (sender as Button)?.Content.ToString();
-            (DataContext as ServiceViewModel)?.StopService(serviceName);
+            var isRunning = ViewModel?.IsServiceRunning(serviceName) ?? false;
         }
     }
 }
