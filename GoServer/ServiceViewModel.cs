@@ -40,62 +40,32 @@ namespace GoServer
 
         public void ToggleAllServices()
         {
-            bool allRunning = new[] { D2DBS, D2CS, D2GS, PVPGN }.All(service => service.IsRunning);
+            bool anyServiceRunning = new[] { D2DBS, D2CS, D2GS, PVPGN }.Any(service => service.IsRunning);
 
-            if (allRunning)
+            if (anyServiceRunning)
+            {
+                // 하나 이상의 서비스가 실행 중이면 모든 서비스 중지
                 StopAllServices();
+            }
             else
+            {
+                // 모든 서비스가 중지 상태면 모든 서비스 시작
                 StartAllServices();
-
-            NotifyServiceStatusChanged();
-        }
-
-        public void StartService(string serviceName) => UpdateServiceStatus(serviceName, true);
-
-        public void StopService(string serviceName) => UpdateServiceStatus(serviceName, false);
-
-        private void UpdateServiceStatus(string serviceName, bool isRunning)
-        {
-            try
-            {
-                var service = GetServiceByName(serviceName);
-                if (service != null)
-                {
-                    service.IsRunning = isRunning;
-
-                    if (isRunning)
-                    {
-                        switch (serviceName)
-                        {
-                            case "D2DBS":
-                                Process.Start(D2DBS.Path); break;
-                            case "D2CS":
-                                Process.Start(D2CS.Path); break;
-                            case "D2GS":
-                                Process.Start(D2GS.Path); break;
-                            case "PVPGN":
-                                Process.Start(PVPGN.Path); break;
-                            case "Store":
-                                Process.Start(Store.Path); break;
-                        }
-                    }
-                }
-                NotifyServiceStatusChanged();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error updating service {serviceName}: {ex.Message}");
             }
         }
+
+
         public void ToggleService(string serviceName)
         {
             var service = GetServiceByName(serviceName);
             if (service != null)
             {
                 if (service.IsRunning)
-                    StopService(serviceName);
+                    service.Stop();
                 else
-                    StartService(serviceName);
+                    service.Start();
+
+                NotifyServiceStatusChanged();
             }
         }
         public bool IsServiceRunning(string serviceName)
@@ -118,35 +88,19 @@ namespace GoServer
 
         public void StartAllServices()
         {
-            try
+            foreach (var service in new[] { D2DBS, D2CS, D2GS, PVPGN })
             {
-                StartService("D2DBS");
-                StartService("D2CS");
-                StartService("D2GS");
-                StartService("PVPGN");
+                service.Start();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error starting all services: {ex.Message}");
-            }
-
             NotifyServiceStatusChanged();
         }
 
         public void StopAllServices()
         {
-            try
+            foreach (var service in new[] { D2DBS, D2CS, D2GS, PVPGN })
             {
-                StopService("D2DBS");
-                StopService("D2CS");
-                StopService("D2GS");
-                StopService("PVPGN");
+                service.Stop();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error stopping all services: {ex.Message}");
-            }
-
             NotifyServiceStatusChanged();
         }
 
